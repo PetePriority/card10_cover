@@ -72,6 +72,7 @@ rndSeed=round(rands(0,5000,1)[0]);
 echo("Generating cover #");
 echo(rndSeed);
 
+/*[Hidden]*/
 none=0;half=1;full=2;normal=0;tiny=1;hidden=1;
 visible=2;protected=3;protectedX=4;
 wide=32;standard=25;
@@ -81,136 +82,89 @@ function rnd(x) =round(rands(0,x,1,seed_value=rndSeed)[0]);
 
 //////////////////////////////////////////////////////////
 
-// display all parts either in optimized print orientation 
-// [ideal for exporting stl's for fdm prints] or in assembly view
+/*[Print Orientation]*/
 
-// %% 'Print view' bool false 
+// display all parts either in optimized print orientation (ideal for exporting stl's for fdm prints) or in assembly view
 printOrientation=false;
 
-// select which parts you want to generate
-// %% 'Generate watch cover' bool true 
+/*[Generated Parts]*/
+
+// Generate watch cover
 generateCover       = true;
-// %% 'Generate bottom plate' bool false 
+// Generate bottom plate
 generateBottom      = true;
-// %% 'Generate wristband top' bool true 
+// Generate wristband top
 generateBeltTop     = true;
-// %% 'Generate wristband bottom' bool true 
+// Generate wristband bottom
 generateBeltBottom  = true;
-// %% 'Generate F clip' bool true 
+// Generate F clip
 generateFClip       = true; 
-// %% 'Generate M clip' bool true 
+// Generate M clip
 generateMClip       = true;
-
-
 
 // ***********************************************
 // CUSTOMIZE YOUR COVER BY ADJUSTING VALUES BELOW:
 // ***********************************************
 
-// do you want to connect a 3D-printed wristband to your case?
-// %% 'Generate wristband' bool true 
+/*[Parameters]*/
+
+// Do you want to connect a 3D-printed wristband to your case?
 wristBand           = true;
-
-// wrist band width - options are 'standard' and 'wide'
-// %% 'Wristband width' select (25='Standard',32='Wide') 
-beltWidth           =  standard; 
-
-// plain', 'pacman', 'hexagons', 'heartbeat', 'flash'
-// %% 'Wristband style' select (0='Plain',1='Hexagons',2='Pacman',3='Heartbeat',4='Flash') 
-beltStyle           = rnd(4);//flash;
-
-
+// Wristband width - options are 'standard' and 'wide'
+beltWidth           =  standard; //[25:'Standard',32:'Wide']
+// Wristband style
+beltStyle           = 0;//[0:'Plain',1:'Hexagons',2:'Pacman',3:'Heartbeat',4:'Flash']
 //circumference of the wrist in mm
-// %% 'Wrist circumference' int (min=140,max=250,default=190)
-wristCircumference  = 190;
+wristCircumference  = 190; //[140:250]
 
-// adjust diffusion layer above leds - options are:
-// 'full' [full diffusion - led's are invisible when turned off]
-// 'half' [only diffusion at bottom ...
-//           ... led's won't blind you when you look at the display]
-// 'none' [led's remain fully open - you get top brightness!]
-// %% 'LED diffusor' select (0='None',1='Half',2='Full')
-ledDiffusor         = rnd(2);//half;  
+// adjusts diffusion layer above leds - 'full' (full diffusion - led's are invisible when turned off) - 'half' (only diffusion at bottom led's won't blind you when you look at the display) - 'none' (led's remain fully open - you get top brightness!)
+ledDiffusor         = 0; //[0:None,1:Half,2:Full]
+// toggle sideways visibility of top row led's - if set to 'true', you'll have to print with minimal overhangs!
+sideLEDs            = true; 
+// adds protruding led protector on top
+extendedLEDs        = true;  
+// toggles cutout for visibility of personal state led
+personalStateLED    = true;  
+// toggles visibility of left led rocket
+showLeftRocket      = true; 
+// toggles visibility of right led rocket
+showRightRocket     = true; 
+// toggles visibility of top led rocket
+showTopRocket       = true;  
 
-// toggle sideways visibility of top row led's 
-// - if set to 'true', you'll have to print with minimal overhangs!
-// %% 'LED top side cutout' bool true 
-sideLEDs            = maybe();//true; 
+// toggles cutout for sewable connectors
+GPIOaccess          = true;  
 
-// add protruding led protector on top
-// %% 'Extended LED bar' bool true 
-extendedLEDs        = maybe();//true;
+// toggles bevels - (no bevels make the cover look more blocky)
+bevels              = true;  
 
-// toggle cutout for visibility of personal state led
-// %% 'Personal State LED visibility' bool true 
-personalStateLED    = maybe();//true;  
+// toggles size of on-off-home button - 'normal' (explains itself) - 'tiny' (tiny button in order to avoid accidental turn-off)
+homeButtonCover     = 0; //[0:Normal, 1:Tiny]  
+// toggles whether buttons have a riffled surface - otherwise button surface is flat
+riffledButtons      = true;  
+// cut out a small rectangle above the physical button in order to  make silver button case visible. blingbling!
+shinyButtons        = true;
 
-// toggle visibility of left led rocket
-// %% 'Left rocket visibility' bool true 
-showLeftRocket      = maybe();//false;
-
-// toggle visibility of right led rocket
-// %% 'Right rocket visibility' bool true 
-showRightRocket     = maybe();//true;  
-
-// toggle visibility of top led rocket
-// %% 'Top rocket visibility' bool true 
-showTopRocket       = maybe();//false;  
-
-// toggle cutout for sewable connectors
-// %% 'GPIO accessibility' bool true 
-GPIOaccess          = maybe();//true;  
-
-// toggle bevels - [no bevels make the cover look more blocky]
-// %% 'Bevels' bool true 
-bevels              = maybe();//false; 
-
-// toggle size of on-off-home button. options are:
-// - 'normal' [explains itself]
-// - 'tiny'   [tiny button in order to avoid accidental turn-off]
-
-// %% 'Home button cover' select (0='Normal',1='Tiny') 
-homeButtonCover     = normal;  
-
-// toggle whether buttons have a riffled surface 
-// - otherwise button surface is flat
-// %% 'Riffled buttons' bool true 
-riffledButtons      = maybe();//true;  
-
-// cut out a small rectangle above the physical button in order to 
-// make silver button case visible. blingbling!
-// %% 'Shiny button cutouts' bool true 
-shinyButtons        = maybe();//false;
-
-// show more of the display module than just the screen area
-// - when false, ccc is shown on the left side of the screen area
-// %% 'Large screen cutout' bool true 
-largeScreen         = maybe();//false;  
-
-// toggle visibility of CARD10 logo   
-// %% 'Logo visibility' bool true    
-showLogo            = maybe();//false;  
+// shows more of the display module than just the screen area - when false, ccc is shown left to the screen area
+largeScreen         = false; 
+// toggles visibility of CARD10 logo
+showLogo            = true;  
 
 // set screw style. options are 'hidden', 'visible', 'protected' or 'protectedX'
-// %% 'Wristband style' select (1='Hidden',2='Visible',3='Protected',4='X-Protected') 
-screwStyle          = rnd(3)+1;//protected; 
-
+screwStyle          = 1;//[1:'Hidden',2:'Visible',3:'Protected',4:'X-Protected']
 // embossed rings around screws?
-// %% 'Screw visibility' bool true 
-screwRings          = maybe();//false; 
+screwRings          = false;
 
 // a little useless grill on top of the spikes???
-// %% 'Useless grill' bool true 
-spikeGrill          = maybe();//true;
+spikeGrill          = false;
 
 //make multicolor prints by changing the filament after the first layer was printed - can be also just set to true if you want to have a bit more texture in the first layer
-// %% 'First layer texture' bool true 
-firstLayerDeco=maybe();//;
+firstLayerDeco=false;
     
 // END OF CUSTOMIZATION!
 
 //////////////////////////////////////////////////////////
-
+/*[Hidden]*/
 
 beltLengthTop       =(wristCircumference-90)/2;//N:50 K:40
 beltThickness=0.45;
